@@ -84,11 +84,6 @@ export class CoursesService {
   }
 
   private async preLoadTagByName(name: String): Promise<Tag> {
-    // const tag = await this.tagRepository.findOne({
-    //   where: {
-    //     name: Like(`%${name}%`), // Use Like para encontrar names que contenham a string especificada
-    //   },
-    // });
     const tag = await this.tagRepository.findOne({
       where: {
         name:  Equal<String>(name),
