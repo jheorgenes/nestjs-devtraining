@@ -13,7 +13,7 @@ export class CoursesController {
     return this.coursesService.findAll();
   }
 
-  @Get(':id')
+  @Get('/:id')
   findOne(@Param('id') id: string) {
     return this.coursesService.findOne(id);
   }
@@ -24,12 +24,12 @@ export class CoursesController {
     return await this.coursesService.create(createCourseDTO);
   }
 
-  @Patch(':id')
+  @Patch('/:id')
   update(@Param('id') id: string, @Body() updateCourseDTO: UpdateCourseDto) {
     return this.coursesService.update(id, updateCourseDTO);
   }
 
-  @Delete(':id')
+  @Delete('/:id')
   remove(@Param('id') id: string, @Body() body) {
     return this.coursesService.remove(id);  
   }

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Course } from './entities/course.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Like, Repository } from 'typeorm';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Tag } from './entities/tag.entity';
@@ -22,7 +22,8 @@ export class CoursesService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(courseId: string) {
+    const id = parseInt(courseId);
     const course = await this.courseRepository.findOne({
       where: { id },
       relations: ['tags']
@@ -48,14 +49,14 @@ export class CoursesService {
     return this.courseRepository.save(course);
   }
 
-  async update(idCourse: string, updateCourseDto: UpdateCourseDto) {
+  async update(courseId: string, updateCourseDto: UpdateCourseDto) {
     const tags = updateCourseDto.tags && (//Valida se tem tags e se tiver, também validará se existe as tags pelo nome
       await Promise.all(
         updateCourseDto.tags.map(name => this.preLoadTagByName(name))
       )
     )
 
-    const id = parseInt(idCourse);
+    const id = parseInt(courseId);
     const course = await this.courseRepository.preload({
       id,
       ...updateCourseDto,
@@ -69,7 +70,8 @@ export class CoursesService {
     return this.courseRepository.save(course);
   }
 
-  async remove(id: string) {
+  async remove(courseId: string) {
+    const id = parseInt(courseId);
     const course = await this.courseRepository.findOne({
       where: { id }
     });
@@ -82,7 +84,16 @@ export class CoursesService {
   }
 
   private async preLoadTagByName(name: String): Promise<Tag> {
-    const tag = await this.tagRepository.findOne({ where: { name }});
+    // const tag = await this.tagRepository.findOne({
+    //   where: {
+    //     name: Like(`%${name}%`), // Use Like para encontrar names que contenham a string especificada
+    //   },
+    // });
+    const tag = await this.tagRepository.findOne({
+      where: {
+        name:  Equal<String>(name),
+      },
+    });
 
     if(tag) {
       return tag;

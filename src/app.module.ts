@@ -3,22 +3,19 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoursesModule } from './courses/courses.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { join } from 'path';
+import { ConfigModule } from '@nestjs/config';
+import { PostgresConfigService } from './config/postgres.config.service';
 
 @Module({
   imports: [
     CoursesModule, 
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'docker',
-      database: 'postgres',
-      entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-      autoloadEntities: true,
-      synchronize: true
-    })
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
+    TypeOrmModule.forRootAsync({
+      useClass: PostgresConfigService,
+      inject: [PostgresConfigService]
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
