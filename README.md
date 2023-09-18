@@ -45,6 +45,21 @@ $ npm i --save @nestjs/mapped-types
 $ docker run --name postgres -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres
 ```
 
+## Migrations
+
+```bash
+
+# Criar uma migração
+$ typeorm migration:create path/name-to-migration
+
+# Executar migração
+$ typeorm migration:run
+
+# Reverter a última migração
+$ typeorm migration:revert
+
+```
+
 ## Running the app
 
 ```bash

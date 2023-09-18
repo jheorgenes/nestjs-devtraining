@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Course } from './entities/course.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, Like, Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Tag } from './entities/tag.entity';
@@ -22,8 +22,7 @@ export class CoursesService {
     });
   }
 
-  async findOne(courseId: string) {
-    const id = parseInt(courseId);
+  async findOne(id: string) {
     const course = await this.courseRepository.findOne({
       where: { id },
       relations: ['tags']
@@ -49,14 +48,13 @@ export class CoursesService {
     return this.courseRepository.save(course);
   }
 
-  async update(courseId: string, updateCourseDto: UpdateCourseDto) {
+  async update(id: string, updateCourseDto: UpdateCourseDto) {
     const tags = updateCourseDto.tags && (//Valida se tem tags e se tiver, também validará se existe as tags pelo nome
       await Promise.all(
         updateCourseDto.tags.map(name => this.preLoadTagByName(name))
       )
     )
 
-    const id = parseInt(courseId);
     const course = await this.courseRepository.preload({
       id,
       ...updateCourseDto,
@@ -70,8 +68,7 @@ export class CoursesService {
     return this.courseRepository.save(course);
   }
 
-  async remove(courseId: string) {
-    const id = parseInt(courseId);
+  async remove(id: string) {
     const course = await this.courseRepository.findOne({
       where: { id }
     });
